@@ -1,0 +1,14 @@
+server:
+  #设置本模块(功能)被访问的端口号
+  port: 10010
+spring:
+  application:
+    #给自己取个名字,同时作为注册中心显示的指向该模块的访问路径的一部分
+    name: EurekaServer2
+eureka:
+  client:
+    service-url:
+      #该客户端所要注册的注册中心的地址
+      defaultZone: http://127.0.0.1:10086/eureka
+    #允许自己注册自己(本句话默认开启)
+    register-with-eureka: true

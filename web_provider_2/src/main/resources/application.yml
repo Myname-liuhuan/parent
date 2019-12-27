@@ -1,0 +1,67 @@
+server:
+  port: 8062
+spring:
+  application:
+    name: web-provider
+  datasource:
+    url: jdbc:mysql://localhost:3306/two?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+    password: 123456
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+
+  #配置thymeleaf 当使用thymeleaf但是不配置模板的时候 本模块的所有controller转发，重定向都会错误
+  #并且配置模板后(定义了前后缀) 本模块中所有的html 将只能在templates目录下使用
+  thymeleaf:
+    mode: HTML5
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+    #使用模板路径
+    check-template-location: true
+    cache: false
+
+redis:
+  database: 0
+  host: 127.0.0.1
+  port: 6379
+  timeout: 3000
+
+#配置日志记录工具
+logging:
+  level:
+    org:
+      #日志信息的打印
+      springframework: error
+    com:
+      example:
+        mapper: debug
+
+#配置pagehelper分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+
+#配置mybatis
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    #开启懒加载
+    lazy-loading-enabled: true
+    #开启按需加载
+    aggressive-lazy-loading: true
+    #开启二级缓存
+    cache-enabled: true
+    #设置 springboot 配置的日志工具 实现mybatis的打印日志接口(这样才能打印出每条语句的结果，否侧就是只显示sql语句 没有表数据显示)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.example.java.web.model.entity
+
+#配置eureka的客户端
+eureka:
+  client:
+    service-url:
+      #本模块将会注册到哪一个注册中心(默认都注册到10086)
+      defaultZone: http://127.0.0.1:10086/eureka

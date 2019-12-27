@@ -1,0 +1,18 @@
+server:
+  port: 8095
+spring:
+  application:
+    name: web_shoppingCart
+
+redis:
+  database: 0
+  host: 127.0.0.1
+  port: 6379
+  timeout: 3000
+
+eureka:
+  #客户端
+  client:
+    service-url:
+      #注册到注册中心的路径（功能模块可以同时注册到多个注册中心，至少要注册一个）
+      defaultZone: http://127.0.0.1:10086/eureka

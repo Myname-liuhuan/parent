@@ -1,0 +1,49 @@
+server:
+  port: 8888
+spring:
+  application:
+    #给自己取个名字,同时作为注册中心显示的指向该模块的访问路径的一部分
+    name: admin
+  datasource:
+    url: jdbc:mysql://localhost:3306/two?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+    password: 123456
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+  #配置视图解析器
+  mvc:
+    view:
+      prefix: /WEB-INF/page/
+      suffix: .jsp
+
+#配置日志记录工具
+logging:
+  level:
+    org:
+      #日志信息的打印
+      springframework: error
+    com:
+      example:
+          mapper: debug
+
+#配置mybatis
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    #开启懒加载
+    lazy-loading-enabled: true
+    #开启按需加载
+    aggressive-lazy-loading: true
+    #开启二级缓存
+    cache-enabled: true
+    #设置 springboot 配置的日志工具 实现mybatis的打印日志接口(这样才能打印出每条语句的结果，否侧就是只显示sql语句 没有表数据显示)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.example.java.admin.entity
+
+#配置eureka的客户端
+eureka:
+  client:
+    service-url:
+      #本模块将会注册到哪一个注册中心(默认都注册到10086)
+      defaultZone: http://127.0.0.1:10086/eureka

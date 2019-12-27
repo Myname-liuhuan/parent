@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>SpringBoot模版渲染</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+</head>
+<body>
+<h3>解析文本标签</h3>
+<p th:text="'用户ID：' + ${uid}"/>
+<p th:text="'用户名称：' + ${name}"/>
+<br>
+
+<h3>解析实体对象</h3>
+<p th:text="'用户id:' + ${user.getId()}"></p>
+<p th:text="'用户姓名:' + ${user.username}"></p>
+<p th:text="'用户手机号:' + ${user.phone}"></p>
+<p th:text="'用户密码:' + ${user.pwd}"></p>
+<br>
+
+<h3>解析set和list集合</h3>
+<!--使用#开头调用工具类
+调用#sets.contains(set集合名,"要比较的字符串") 判断该集合中是否含有该字段-->
+<p th:text="${#sets.contains(set,'adele')}"/>
+<p th:text="${#sets.size(set)}"/>
+<!--th:each 只能用于支持each 的标签里面 比如 ul tr select等-->
+<ul th:each="e : ${set}">
+    <li th:text="${e}"></li>
+</ul>
+<p th:text="${#lists.size(list)}"></p>
+<ul th:each="e : ${list}">
+    <li th:text="${e}"></li>
+</ul>
+<br>
+
+<h3>使用内置对象</h3>
+<!--通过在${#内置对象名}调用内置对象-->
+<p th:text="${#httpServletRequest.getRemoteAddr()}"/>
+<p th:text="${#httpServletRequest.getAttribute('requestAttr')}"/>
+<p th:text="${#httpSession.getId()}"/>
+<p th:text="${#httpServletRequest.getServletContext().getRealPath('/')}"/>
+<p th:text="${#httpServletRequest.getServletContext().getContextPath()}"/>
+<p th:text="'requestAttr = ' + ${requestAttr}" />
+<p th:text="'sessionAttr = ' + ${sessionAttr}" />
+<p th:text="'applicationAttr = ' + ${application}" />
+
+
+<h3>显示页面访问的绝对路径</h3>
+<p th:text="${#request.getScheme() + '://' + #request.getServerName() + ':'+ #request.getServerPort()}"/>
+</body>
+</html>

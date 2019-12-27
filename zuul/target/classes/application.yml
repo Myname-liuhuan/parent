@@ -1,0 +1,16 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: zuul
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+
+#配置模块的对外访问路径
+zuul:
+  routes:
+    #配置各个模块对应的外部访问路径  模块名 : 给模块指定的外部路径(类似于别名)
+    admin : /admin/**
+    web : /web/**
