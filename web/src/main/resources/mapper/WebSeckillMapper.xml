@@ -3,7 +3,7 @@
 
 <mapper namespace="com.example.java.web.mapper.WebSeckillMapper">
 
-	<!-- 可根据自己的需求，是否要使用 -->
+    <!-- 可根据自己的需求，是否要使用 -->
     <resultMap type="WebSeckillEntity" id="webSeckillMap">
         <result property="id" column="id"/>
         <result property="productid" column="productId"/>
@@ -14,24 +14,24 @@
         <result property="status" column="status"/>
         <result property="href" column="href"/>
     </resultMap>
-  
-  <!--要查询的字段-->  
-  <sql id="sel_WebSeckillColumns_List" > 
-  	  id ,        
-   productId  ,        
-  num ,        
-   seckillPrice  ,        
-   startTime  ,        
-   endTime  ,        
-  status ,        
-  href         
-  
+
+  <!--要查询的字段-->
+  <sql id="sel_WebSeckillColumns_List" >
+      id ,
+   productId  ,
+  num ,
+   seckillPrice  ,
+   startTime  ,
+   endTime  ,
+  status ,
+  href
+
   </sql>
-  
+
   <!--要添加的字段-->
   <sql id="ins_WebSeckillColumns_List" >
-       #{id},   #{productid},   #{num},   #{seckillprice},   #{starttime},   #{endtime},   #{status},   #{href}   </sql> 
-  
+       #{id},   #{productid},   #{num},   #{seckillprice},   #{starttime},   #{endtime},   #{status},   #{href}   </sql>
+
   <!--要修改的字段-->
   <sql id="upd_WebSeckillColumns_List" >
     <set>
@@ -42,10 +42,10 @@
     <if test="t.endtime != null">endTime = #{t.endtime}, </if>
     <if test="t.status != null">status = #{t.status}, </if>
     <if test="t.href != null">href = #{t.href}</if>
-	</set>
-	where id = #{t.id}
-  </sql> 
-  
+    </set>
+    where id = #{t.id}
+  </sql>
+
   <!--定义删除的条件-->
   <sql id="del_WebSeckillParams_List">
     <where>
@@ -57,11 +57,11 @@
     <if test="t.endtime != null">and endTime = #{t.endtime}</if>
     <if test="t.status != null">and status = #{t.status}</if>
     <if test="t.href != null">and href = #{t.href}</if>
-	</where>
-  </sql> 
+    </where>
+  </sql>
   
-  <!--定义查询的条件-->
-  <sql id="sel_WebSeckillParams_List">
+    <!--定义查询的条件-->
+    <sql id="sel_WebSeckillParams_List">
     <where>
     <if test="t.id != null">and id = #{t.id}</if>
     <if test="t.productid != null">and productId = #{t.productid}</if>
@@ -71,8 +71,8 @@
     <if test="t.endtime != null">and endTime = #{t.endtime}</if>
     <if test="t.status != null">and status = #{t.status}</if>
     <if test="t.href != null">and href = #{t.href}</if>
-	</where>
-  </sql>
+    </where>
+    </sql>
 
     <!--添加-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">

@@ -111,7 +111,7 @@ $(function () {
     function signOut() {
         jQuery.ajax({
             url:"http://localhost:7079/webusers/signOut",
-            dataType:"json",
+            dataType:"text",
             data:{"token":token},
             async:false,
             type:"post",

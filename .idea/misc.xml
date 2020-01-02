@@ -11,6 +11,7 @@
     <file type="web" url="file://$PROJECT_DIR$/web_provider_1" />
     <file type="web" url="file://$PROJECT_DIR$/web_provider_2" />
     <file type="web" url="file://$PROJECT_DIR$/web_register" />
+    <file type="web" url="file://$PROJECT_DIR$/web_seckill" />
     <file type="web" url="file://$PROJECT_DIR$/web_shoppingCart" />
     <file type="web" url="file://$PROJECT_DIR$/web_sso" />
     <file type="web" url="file://$PROJECT_DIR$/zuul" />

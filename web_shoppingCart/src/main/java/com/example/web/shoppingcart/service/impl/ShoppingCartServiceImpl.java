@@ -33,18 +33,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * 该方法中做参数是否合法的判断操作
      * @param id
      * @param goodNum
-     * @param logined
+     * @param token
      * @param request
      * @param response
      * @return
      */
     @Override
-    public String addGoods(Integer id, Integer goodNum, Boolean logined, HttpServletRequest request, HttpServletResponse response) {
-        if (logined != null && id != null && goodNum != null && goodNum > 0){
+    public String addGoods(Integer id, Integer goodNum, String token, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        if (id != null && goodNum != null && goodNum > 0){
             try {
                 //先判断是否是登录状态
-                if (logined){
-                    addGoodsToRedis(id, goodNum);
+                if (token != null){
+                    addGoodsToRedis(id, goodNum,token);
                 }else{
                     addGoodsToCookie(id, goodNum,request,response);
                 }
@@ -53,14 +53,93 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 e.printStackTrace();
             }
         }else{
-            System.out.println("id : " + id + " goodNum" + goodNum + " logined" + logined);
+            System.out.println("id : " + id + " goodNum" + goodNum + " token" + token);
             return "传入参数不合法";
         }
         return "fail";
     }
 
+    /**
+     * 将cookie中的数据存到redis中并且将cookie删除,
+     * 要做cookie和redis中数据的合并
+     * @param request
+     * @param response
+     * @param token
+     * @return
+     */
     @Override
-    public String cookieToRedis(HttpServletRequest request, HttpServletResponse response, String token){
+    public String cookieToRedis(HttpServletRequest request, HttpServletResponse response, String token) throws Exception{
+        if (token != null){
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null){
+                for (Cookie cookie : cookies) {
+                    if ("shoppingCart".equals(cookie.getName())){
+                        //最后都要删除该cookie,不能放到外层 因为这样的写法会删除所有cookie
+                        ShoppingCart shoppingCartCookie = JSON.parseObject(Base64Utils.getFromBASE64(cookie.getValue()), ShoppingCart.class);
+                        ValueOperations vop = redisTemplate.opsForValue();
+                        //判断redis中是否以及存在数据 存在就合并 不存在就创建新的key存放应用数据
+                        if (redisTemplate.hasKey("shoppingCart"+token)){
+                            String redisObjStr =(String) vop.get("shoppingCart" + token);
+                            ShoppingCart shoppingCartRedis = JSON.parseObject(redisObjStr, ShoppingCart.class);
+                            List<Good> shoppingCartListCookie = shoppingCartCookie.getGoods();
+                            List<Good> shoppingCartListRedis = shoppingCartRedis.getGoods();
+                            //比较两个list 方法是遍历一个list 在每一个循环中 将当前Good和另一个List 的所有比较
+                            for (Good good : shoppingCartListCookie) {
+                                if (shoppingCartListRedis.contains(good)){
+                                    Good good1 = shoppingCartListRedis.get(shoppingCartListRedis.indexOf(good));
+                                    good1.setGoodNum(good1.getGoodNum() + good.getGoodNum());
+                                }else{
+                                    shoppingCartListRedis.add(good);
+                                }
+                            }
+                            //现在shoppingCartListRedis 中已经存放了合并后的数据，接下来存数据到redis 删除cookie
+                            shoppingCartRedis.setGoods(shoppingCartListRedis);
+                            vop.set("shoppingCart" + token, JSON.toJSONString(shoppingCartRedis));
+                        }else{
+                            //redis中没有存过那就直接将shoppingCartCookie存到redis
+                            vop.set("shoppingCart" + token, JSON.toJSONString(shoppingCartCookie));
+                        }
+                        cookie.setMaxAge(0);
+                        //指定要删除的该cookie的path 错误的话 将无法删除成功
+                        cookie.setPath("/shoppingcart");
+                        response.addCookie(cookie);
+                        break;
+                    }
+                }
+                return "success";
+            }
+            return "cookie为 null";
+        }
+        return "token为 null";
+    }
+
+
+    /**
+     * 根据token 得到购物车中的数据，token为null 去cookie中找 不为null 去redis 中找
+     * @param token
+     * @return
+     */
+    @Override
+    public List<Good> showGoods(String token, HttpServletRequest request) {
+        if (token != null){
+            if (redisTemplate.hasKey("shoppingCart"+token)){
+                String goodsStr = (String) redisTemplate.opsForValue().get("shoppingCart" + token);
+                System.out.println("redis: " + goodsStr);
+                return JSON.parseObject(goodsStr,ShoppingCart.class).getGoods();
+            }
+        }else{
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null){
+                for (Cookie cookie : cookies) {
+                    if ("shoppingCart".equals(cookie.getName())){
+                        List<Good> goods = JSON.parseObject(Base64Utils.getFromBASE64(cookie.getValue()), ShoppingCart.class).getGoods();
+                        System.out.println("cookie: " + Base64Utils.getFromBASE64(cookie.getValue()));
+                        return goods;
+                    }
+                }
+            }
+        }
+        System.out.println("null");
         return null;
     }
 
@@ -118,6 +197,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             //将json字符串先加密 然后再存到cookie 中
             String encodingStr = Base64Utils.getBASE64(JSON.toJSONString(shoppingCart));
             resCookie = new Cookie("shoppingCart",encodingStr);
+            resCookie.setPath("/shoppingcart");
         }
 
         //将包含完整数据的cookie返回给客户端
@@ -133,13 +213,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @return
      * @throws Exception
      */
-    private void addGoodsToRedis(Integer id, Integer goodNum) throws Exception{
+    private void addGoodsToRedis(Integer id, Integer goodNum, String token) throws Exception{
         //声明对象作为最后提交的参数
         ShoppingCart shoppingCart;
 
         //先判断redis中是否存在该参数
-        if (redisTemplate.hasKey("shoppingCart")){
-            String objJson =(String) redisTemplate.opsForValue().get("shoppingCart");
+        if (redisTemplate.hasKey("shoppingCart" + token)){
+            String objJson =(String) redisTemplate.opsForValue().get("shoppingCart" + token);
             shoppingCart = JSON.parseObject(objJson, ShoppingCart.class);
             setShoppingCart(shoppingCart,id,goodNum);
         }else{
@@ -154,8 +234,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
         //上面的代码 得到含有数据的shoppingCart 现在 将其Json化 并存到redis中
         String jsonStrRedis = JSON.toJSONString(shoppingCart);
-        redisTemplate.opsForValue().set("shoppingCart",jsonStrRedis);
-        System.out.println("keep in redis ");
+        System.out.println(jsonStrRedis);
+        redisTemplate.opsForValue().set("shoppingCart" + token,jsonStrRedis);
     }
 
     /**

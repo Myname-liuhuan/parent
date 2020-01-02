@@ -13,6 +13,7 @@
         <module name="web_product" />
         <module name="eureka_2" />
         <module name="eureka_1" />
+        <module name="web_seckill" />
         <module name="zuul" />
         <module name="web_shoppingCart" />
         <module name="web_provider" />
@@ -39,6 +40,7 @@
       <module name="web_provider_1" options="-parameters" />
       <module name="web_provider_2" options="-parameters" />
       <module name="web_register" options="-parameters" />
+      <module name="web_seckill" options="-parameters" />
       <module name="web_shoppingCart" options="-parameters" />
       <module name="web_sso" options="-parameters" />
       <module name="zuul" options="-parameters" />

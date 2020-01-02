@@ -21,6 +21,7 @@
         <module>web_product</module>
         <module>web_sso</module>
         <module>web_shoppingCart</module>
+        <module>web_seckill</module>
     </modules>
     <packaging>pom</packaging>
 
