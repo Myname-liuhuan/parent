@@ -16,8 +16,8 @@ public class AliyunSmsUtil {
 
     static  String product = "Dysmsapi";//产品名称:云通信短信API产品,开发者无需替换
     static  String domain = "dysmsapi.aliyuncs.com";//产品域名,开发者无需替换、
-    static  String accessKeyId = "LTAI4FtPxDaxJ8kYrnBotvJr"; //你保存的accessKeyId值  需要替换
-    static  String accessKeySecret = "67NtfLxVJEaSghBpnXgvf4sUfClXdC";//accessKeySecret值  需要替换
+    static  String accessKeyId = ""; //你保存的accessKeyId值  需要替换
+    static  String accessKeySecret = "";//accessKeySecret值  需要替换
 
     public static String sendSms(String Numbers,String code) throws ClientException {
         //可自助调整超时时间
